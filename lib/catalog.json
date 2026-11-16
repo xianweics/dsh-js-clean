@@ -1,0 +1,878 @@
+{
+  "source": "https://github.com/xianweics/refator-code",
+  "title": "重构：改善既有代码的设计（中文笔记）",
+  "smells": [
+    {
+      "id": "mysterious-name",
+      "name": "神秘命名",
+      "signs": "如果想不出一个好的名字，说明背后很可能隐藏着更深的设计问题",
+      "advice": "想出一个能体现意图的好名字，名字想不出来就先重构设计"
+    },
+    {
+      "id": "duplicate-code",
+      "name": "重复代码",
+      "signs": "同一段逻辑在多处重复出现",
+      "advice": "对比差异，提取相同"
+    },
+    {
+      "id": "long-function",
+      "name": "过长函数",
+      "signs": "函数太长、一眼看不完",
+      "advice": "把条件、循环、公共集中的过程提取处理"
+    },
+    {
+      "id": "long-parameter-list",
+      "name": "过长参数列表",
+      "signs": "函数参数太多、调用时难以理解",
+      "advice": "使用对象合并参数"
+    },
+    {
+      "id": "global-data",
+      "name": "全局数据",
+      "signs": "数据被全局访问、到处都能改",
+      "advice": "合并数据到方法、类成员中"
+    },
+    {
+      "id": "mutable-data",
+      "name": "可变数据",
+      "signs": "数据会在运行过程中被修改",
+      "advice": "用函数式编程，让数据永不改变"
+    },
+    {
+      "id": "divergent-change",
+      "name": "发散式变化",
+      "signs": "对某个模块的小修改，必须修改某个类的多个函数",
+      "advice": "每次只关心一个上下文，将联动的改变提取处理"
+    },
+    {
+      "id": "shotgun-surgery",
+      "name": "霰弹式修改",
+      "signs": "每次遇到变化，都必须在很多不同的类内做出许多小修改",
+      "advice": "提取公共方法"
+    },
+    {
+      "id": "feature-envy",
+      "name": "依恋情结",
+      "signs": "一个函数跟另一个模块中的函数或者数据交流格外频繁，远胜于在自己所处的模块内部交流",
+      "advice": "模块化：力求将代码分出区域，最大化区域内部的交互、最小化跨区域的交互，做到高内聚、低耦合"
+    },
+    {
+      "id": "data-clumps",
+      "name": "数据泥团",
+      "signs": "两个类中相同的字段、许多函数签名中相同的参数",
+      "advice": "提取公共字段为一个类、对象"
+    },
+    {
+      "id": "primitive-obsession",
+      "name": "基本类型偏执",
+      "signs": "一些基本类型无法表示一个数据的真实意义，例如电话号码、温度等",
+      "advice": "使用类、对象字符串类型变量取代基本类型"
+    },
+    {
+      "id": "repeated-switches",
+      "name": "重复的 switch",
+      "signs": "同样的 switch 逻辑在多处重复",
+      "advice": "使用策略模式、提取子类"
+    },
+    {
+      "id": "loops",
+      "name": "循环语句",
+      "signs": "代码里到处是循环语句，问题和过长函数一样",
+      "advice": "用管道等更简洁的写法取代循环，把循环体提炼成函数"
+    },
+    {
+      "id": "lazy-element",
+      "name": "冗赘的元素",
+      "signs": "存在没有实际价值的元素",
+      "advice": "内联、删除"
+    },
+    {
+      "id": "speculative-generality",
+      "name": "夸夸其谈通用性",
+      "signs": "为用不上的场景做了过度通用的设计",
+      "advice": "内联、删除"
+    },
+    {
+      "id": "temporary-field",
+      "name": "临时字段",
+      "signs": "类中存在只在某些情况下才有值的临时字段",
+      "advice": "内联、删除"
+    },
+    {
+      "id": "message-chains",
+      "name": "过长的消息链",
+      "signs": "调用链太长，客户代码依赖了太多中间对象",
+      "advice": "减少委托关系"
+    },
+    {
+      "id": "middle-man",
+      "name": "中间人",
+      "signs": "类中大量函数只是简单委托给另一个类",
+      "advice": "用继承替代代理委托"
+    },
+    {
+      "id": "insider-trading",
+      "name": "内幕交易",
+      "signs": "两个类私底下大量交换数据",
+      "advice": "合并相同的联系，提取不同的成分"
+    },
+    {
+      "id": "large-class",
+      "name": "过大的类",
+      "signs": "一个类承担了太多职责",
+      "advice": "提取类、子类、接口"
+    },
+    {
+      "id": "alternative-classes",
+      "name": "异曲同工的类",
+      "signs": "两个类的功能相似但接口不同",
+      "advice": "提取公共类、使用子类继承"
+    },
+    {
+      "id": "data-class",
+      "name": "纯数据类",
+      "signs": "它们拥有一些字段，以及访问、读写这些字段的函数",
+      "advice": "将相关操作封装进去，降低 public 成员变量"
+    },
+    {
+      "id": "refused-bequest",
+      "name": "被拒绝的遗赠",
+      "signs": "如果子类继承超类的数据和方法，但不使用",
+      "advice": "用内联数据和方法、代理委托替代继承关系"
+    },
+    {
+      "id": "comments",
+      "name": "注释",
+      "signs": "当你感觉需要编写注释时",
+      "advice": "请先尝试重构，试着让所有注释变得多余"
+    }
+  ],
+  "techniques": [
+    {
+      "id": "6.1",
+      "name": "提炼函数",
+      "chapter": "6 第一组重构",
+      "intent": "将意图与实现分开。意图 == 主干；实现 == 分支的实现",
+      "when": "如果需要花时间浏览一段代码才能弄清它到底干什么，那么就应该将其提炼到一个函数中，并根据它所做的事为其命名。以后再读到这段代码时，可以一眼就能知道函数的用途，大多数根本不需要关心函数如何实现。",
+      "steps": [],
+      "example": {
+        "before": "function printOwing(invoice){\n  printBanner();\n  const outstanding = calculateOutstanding();      \n  // print details\n  console.info('name:', invoice.name);\n  console.info('amount:', outstanding);\n}",
+        "after": "function printOwing(invoice){\n  printBanner();\n  const outstanding = calculateOutstanding();\n  printDetails(outstanding, invoice);\n  function printDetails(outstanding, invoice) {\n    console.info('name:', invoice.name);\n    console.info('amount:', outstanding);\n  }\n}"
+      }
+    },
+    {
+      "id": "6.2",
+      "name": "内联函数",
+      "chapter": "6 第一组重构",
+      "intent": "去除不必要间接层/委托层，降低系统复杂度",
+      "when": "一堆不合理的函数，可以将其内联到一个大型函数中，再重新提炼到小函数中；代码太多间接层，使系统中的所有函数都似乎只是对另一个函数简单的委托",
+      "steps": [],
+      "example": {
+        "before": "function getRating(driver){\n  return moreThanFiveDeliveries(driver) ? 2 : 1;\n}\n\nfunction moreThanFiveDeliveries(driver){\n  return driver.deliveries > 5;\n}",
+        "after": "function getRating(driver){\n  return driver.deliveries > 5 ? 2 : 1;\n}"
+      }
+    },
+    {
+      "id": "6.3",
+      "name": "提炼变量",
+      "chapter": "6 第一组重构",
+      "intent": "将复杂的表达式使用变量说明",
+      "when": "",
+      "steps": [],
+      "example": {
+        "before": "return order.quantity * order.itemPrice - Math.max(0, order.quantity - 500) * order.itemPrice * 0.05 + Math.min(order.quantity * order.itemPrice * 0.1, 100);",
+        "after": "const basePrice = order.quantity * order.itemPrice;\nconst quantityDiscount =  Math.max(0, order.quantity - 500) * order.itemPrice * 0.05;\nconst shipping = Math.min(basePrice * 0.1, 100);\nreturn basePrice - quantityDiscount + shipping;"
+      }
+    },
+    {
+      "id": "6.4",
+      "name": "内联变量",
+      "chapter": "6 第一组重构",
+      "intent": "去除不必要变量",
+      "when": "表达式比变量更有表现力",
+      "steps": [],
+      "example": {
+        "before": "const basePrice = order.basePrice;\nreturn basePrice > 25;",
+        "after": "return order.basePrice > 25;"
+      }
+    },
+    {
+      "id": "6.5",
+      "name": "改变函数声明",
+      "chapter": "6 第一组重构",
+      "intent": "好名字能让人一眼看出函数的用途，而不必看代码实现",
+      "when": "",
+      "steps": [
+        "先写一句注释描述这个函数的用途，再把这句注释变成函数的名字"
+      ],
+      "example": {
+        "before": "function calc(){}",
+        "after": "function calcOrder(){}"
+      }
+    },
+    {
+      "id": "6.6",
+      "name": "封装变量",
+      "chapter": "6 第一组重构",
+      "intent": "重构数据转移为重构函数，更易于处理；监控数据的变化",
+      "when": "如果数据的可访问范围大",
+      "steps": [],
+      "example": {
+        "before": "let defaultOwner = {};",
+        "after": "let defaultOwner = {};\nexport function defaultOwner(){\n  return defaultOwner;\n}\nexport function getDefaultOwner(arg){\n  defaultOwner = arg;\n}"
+      }
+    },
+    {
+      "id": "6.7",
+      "name": "变量改名",
+      "chapter": "6 第一组重构",
+      "intent": "好名字可让上下文更清晰",
+      "when": "",
+      "steps": [],
+      "example": {
+        "before": "const a = height * width;",
+        "after": "const area = height * width;"
+      }
+    },
+    {
+      "id": "6.8",
+      "name": "引入参数对象",
+      "chapter": "6 第一组重构",
+      "intent": "组织数据结构，让数据项之间的关系更清晰，参数列表也能缩短",
+      "when": "一个函数接受多个参数",
+      "steps": [],
+      "example": {
+        "before": "function invoice(startDate, endDate){}\nfunction received(starDate, endDate){}",
+        "after": "function invoice(dateRange){}\nfunction received(dateRanges){}"
+      }
+    },
+    {
+      "id": "6.9",
+      "name": "函数组合成类",
+      "chapter": "6 第一组重构",
+      "intent": "对象内部调用这些函数可以少传参数，从而简化函数调用，而且一个对象可更方便传递给系统的其他部分；客户端修改对象的核心数据，通过计算得出的派生数据会自动与核心数据保存一致",
+      "when": "如果一组函数形影不离地操作同一块数据（通常是将这块数据作为参数传递给函数）",
+      "steps": [],
+      "example": {
+        "before": "function base(reading){}\nfunction taxableCharge(reading){}\nfunction calcBaseCharge(reading){}",
+        "after": "class Reading{\n  base(){}\n  taxableCharge(){}\n  calcBaseCharge(){}\n}"
+      }
+    },
+    {
+      "id": "6.10",
+      "name": "函数组合成变换",
+      "chapter": "6 第一组重构",
+      "intent": "增强数据，将数据逻辑统一在一个地方处理；高内聚",
+      "when": "需要把数据放到另一个程序中运行，计算出各种派生信息",
+      "steps": [],
+      "example": {
+        "before": "function base(reading){}\nfunction taxableCharge(reading){}",
+        "after": "import { cloneDeep } from 'lodash';\nfunction enrichReading(arg){\n  const reading = cloneDeep(arg);\n  reading.baseCharge = base(reading);\n  reading.taxableCharge = taxableCharge(reading);\n  return reading;\n}"
+      }
+    },
+    {
+      "id": "6.11",
+      "name": "拆分阶段",
+      "chapter": "6 第一组重构",
+      "intent": "保证单一原则，一段代码只做一件事",
+      "when": "如果一段代码同时处理两件或者更多不同的事情",
+      "steps": [],
+      "example": {
+        "before": "const orderArr = orderStr.split(/\\s+/);\nconst productPrice = priceList(order[0].split('-')[1]);\nconst orderPrice = parseInt(orderArr[1]) * productPrice;",
+        "after": "const orderRecord = parseOrder(order);\nconst orderPrice = price(orderRecord, priceList);\n\nfunction parseOrder(str){\n  const values = str.split(/\\s+/);\n  return {\n    priceId: values[0].split('-')[1],\n    quantity: parseInt(values[1]) \n  };\n}\n\nfunction price(order, priceList){\n  return order.quantity * priceList[order.productId];\n}"
+      }
+    },
+    {
+      "id": "7.1",
+      "name": "封装记录",
+      "chapter": "7 封装",
+      "intent": "对象可以隐藏结构的细节；有助于字段改名",
+      "when": "对于可变数据",
+      "steps": [],
+      "example": {
+        "before": "const organization = {name: 'John', country: 'GB'};",
+        "after": "class Organization{\n  constructor(data){\n    this._name = data.name;\n    this._country = data.country;\n  }\n  get name(){\n    return this._name;\n  }\n  set name(arg){\n    this._name = arg;\n  } \n  get country(){\n    return this._country;\n  }\n  set country(arg){\n    this._country = arg;\n  }\n}"
+      }
+    },
+    {
+      "id": "7.2",
+      "name": "封装集合",
+      "chapter": "7 封装",
+      "intent": "控制外界对类中集合的访问权，避免集合被直接修改",
+      "when": "类中集合为可变数据",
+      "steps": [],
+      "example": {
+        "before": "class Person{\n  get courses(){\n    return this._courses;\n  }\n  set courses(list){\n    this._course = list;\n  }\n}",
+        "after": "class Person{\n  get course(){\n    return this._courses.slice();\n  }\n  addCourse(course){}\n  removeCourse(course){}\n}"
+      }
+    },
+    {
+      "id": "7.3",
+      "name": "以对象取代基本类型",
+      "chapter": "7 封装",
+      "intent": "扩展或者增强数据的行为",
+      "when": "如果数据项需要更多的含义或者行为时",
+      "steps": [],
+      "example": {
+        "before": "orders.filter(o => 'high' === o.priority || 'rush' === o.priority);",
+        "after": "orders.filter(o => o.priority.higherThan(new Priority('normal')));\nfunction Priority(){}"
+      }
+    },
+    {
+      "id": "7.4",
+      "name": "以查询取代临时变量",
+      "chapter": "7 封装",
+      "intent": "新函数与原函数之间的边界更清晰；便于代码抽离；利于函数复用",
+      "when": "那些值被计算一次且之后不再被修改的变量",
+      "steps": [],
+      "example": {
+        "before": "class Price{\n  getPrice(){\n    const basePrice = this._quantity * this._itemPrice;\n    return basePrice > 1000 ? basePrice * 0.95 : basePrice * 0.98;\n  }\n}",
+        "after": "class Price{\n  get basePrice(){ \n    return this._quantity * this._itemPrice;\n  }\n  getPrice(){\n    return this.basePrice > 1000 ? this.basePrice * 0.95 : this.basePrice * 0.98;\n  }\n}"
+      }
+    },
+    {
+      "id": "7.5",
+      "name": "提取类",
+      "chapter": "7 封装",
+      "intent": "将大类分成小类",
+      "when": "维护一个大量函数和数据的类",
+      "steps": [],
+      "example": {
+        "before": "class Person{\n  get officeAreaCode(){\n    return this._officeAreaCode;\n  }\n  get officeNumber(){\n    return this._officeNumber;\n  }\n}",
+        "after": "class Person{\n  constructor(telephoneNumber){\n    this._telephoneNumber = telephoneNumber;\n  }\n  get officeAreaCode(){\n    return this._telephoneNumber.areaCode;\n  }\n  get officeNumber(){\n    return this._telephoneNumber.number;\n  }\n}\nclass TelephoneNumber{\n  get areaCode(){\n    return this._areaCode;\n  }\n  get number(){\n    return this._number;\n  }\n}"
+      }
+    },
+    {
+      "id": "7.6",
+      "name": "内联类",
+      "chapter": "7 封装",
+      "intent": "减少不必要的类",
+      "when": "如果一个类不再承担足够的责任；重新分类两个类的不同职责",
+      "steps": [],
+      "example": {
+        "before": "class Person{\n  constructor(telephoneNumber){\n    this._telephoneNumber = telephoneNumber;\n  }\n  get officeAreaCode(){\n    return this._telephoneNumber.areaCode;\n  }\n  get officeNumber(){\n    return this._telephoneNumber.number;\n  }\n}\nclass TelephoneNumber{\n  get areaCode(){\n    return this._areaCode;\n  }\n  get number(){\n    return this._number;\n  }\n}",
+        "after": "class Person{\n  get officeAreaCode(){\n    return this._officeAreaCode;\n  }\n  get officeNumber(){\n    return this._officeNumber;\n  }\n}"
+      }
+    },
+    {
+      "id": "7.7",
+      "name": "隐藏委托关系",
+      "chapter": "7 封装",
+      "intent": "每个模块尽可能减少了解系统的其他部分，把部分依赖关系隐藏起来，减少调用者双方了解更多细节",
+      "when": "如果被调方接口频繁修改时",
+      "steps": [],
+      "example": {
+        "before": "class Person{\n  constructor(name){\n    this._name = name;\n  }\n  get name(){\n    return this._name;\n  }\n  get department(){\n    return this._department;\n  }\n  set department(name){\n    this._department = name;\n  }\n}\nclass Department{\n  construtor(department){\n    this._department = department;\n  }\n  get manager(){\n// ...",
+        "after": "class Person{\n  constructor(name){\n    this._name = name;\n  }\n  get name(){\n    return this._name;\n  }\n  get department(){\n    return this._department;\n  }\n  set department(name){\n    this._department = name;\n  }\n  get manager(){\n    return this._department.manager;\n  }\n}\nclass Department{\n  construtor(department){\n// ..."
+      }
+    },
+    {
+      "id": "7.8",
+      "name": "移除中间人",
+      "chapter": "7 封装",
+      "intent": "减少不不必要的委托",
+      "when": "如果过多的转发函数没有让程序本身提升的扩展性，就应删除部分委托",
+      "steps": [],
+      "example": {
+        "before": "const person = new Person('John');\nperson.department = new Department('human resource');\nconst manager = person.manager;",
+        "after": "const person = new Person('John');\nperson.department = new Department('human resource');\nconst manager = person.department.manager;"
+      }
+    },
+    {
+      "id": "7.9",
+      "name": "替换算法",
+      "chapter": "7 封装",
+      "intent": "用简单算法处理",
+      "when": "随着对业务不断深入，发觉有更简单的算法实现",
+      "steps": [],
+      "example": {
+        "before": "function foundPerson(people){\n  for(let i = 0; i < people.length; i++){\n    if(people[i] === 'John'){\n      return 'John';\n    }\n    if(people[i] === 'Maria'){\n      return 'Maria';\n    }\n    if(people[i] === 'Mike'){\n      return 'Mike';\n    }\n  }\n  return '';\n}",
+        "after": "function foundPerson(people){\n  const candidate = ['John', 'Maria', 'Mike'];\n  return people.find(p => candidate.includes(p)) || '';\n}"
+      }
+    },
+    {
+      "id": "8.1",
+      "name": "搬移函数",
+      "chapter": "8 搬移特性",
+      "intent": "减少对不常用函数的外部依赖，增加常用函数的内部依赖，高内聚",
+      "when": "如果一个方法频繁调用别处的一个函数，并且被频繁调用的函数在该上下文关系不大时",
+      "steps": [],
+      "example": {
+        "before": "class Account{\n  get overdraftCharge(){}\n}",
+        "after": "class AccountType{\n  get overdraftCharge(){}\n}"
+      }
+    },
+    {
+      "id": "8.2",
+      "name": "搬移字段",
+      "chapter": "8 搬移特性",
+      "intent": "高内聚，将不属于当前类的属性搬到另一个类中",
+      "when": "如果修改一条记录时，总是需要同时改动另一个记录",
+      "steps": [],
+      "example": {
+        "before": "class Customer{\n  constructor(plan, discountRate){\n    this._plan = plan;\n    this._discountRate = discountRate;\n  }\n  get plan(){\n    return this._plan;\n  }\n  get discountRate(){\n    return this._discountRate;\n  }\n}\nconst john = new Customer('John');\nconsole.info(john.plan);\nconsole.info(john.discountRate);",
+        "after": "class Customer{\n  constructor(plan){\n    this._plan = plan;\n  }\n  get plan(){\n    return this._plan;\n  }\n  get discountRate(){\n    return this.plan.discountRate;\n  }\n}\nconst john = new Customer({\n  name: 'John',\n  discountRate: 0.25\n});\nconsole.info(john.plan);\nconsole.info(john.discountRate);"
+      }
+    },
+    {
+      "id": "8.3",
+      "name": "搬移语句到函数",
+      "chapter": "8 搬移特性",
+      "intent": "消除重复，提取公共内容，即表现一致的行为",
+      "when": "发现调用某个函数时，总有一些相同的代码也需要每次执行",
+      "steps": [],
+      "example": {
+        "before": "function getResult(person) {\n  let result = [];\n  result.push(`<p>title: ${person.photo.title}</p>`);\n  result = result.concat(photoData(person.photo));\n  function photoData(photo){\n    return [\n      `<p>location: ${photo.location}</p>`,\n      `<p>date: ${photo.date}</p>`\n    ];\n  }\n  return result;\n};\ngetResult({photo: {title: 'title', location: 'New York', data: '01/16/2022'}});",
+        "after": "function getResult(person) {\n  function photoData(photo){\n    return [\n      `<p>title: ${photo.title}</p>`,\n      `<p>location: ${photo.location}</p>`,\n      `<p>date: ${photo.date}</p>`\n    ];\n  }\n  return [].concat(photoData(person.photo));\n};\ngetResult({photo: {title: 'title', location: 'New York', data: '01/16/2022'}});"
+      }
+    },
+    {
+      "id": "8.4",
+      "name": "搬移语句到调用者",
+      "chapter": "8 搬移特性",
+      "intent": "将可变的行为搬移到调用者内部",
+      "when": "以往多个地方公共的行为，如今需要在某些调用点表现不同的行为，并且调用点与调用者之间的边界差别不大。如果差别较大的，只能重新设计",
+      "steps": [],
+      "example": {
+        "before": "function demoWrapper(outStream, person){\n  emitPhotoData(outStream, person.photo);\n  function emitPhotoData(outStream, photo){\n    outStream.write(`<p>title: ${photo.title}</p>`);\n    outStream.write(`<p>title: ${photo.location}</p>`);\n  }\n}\n\nconst person = {photo: {title: 'title', location: 'New York'}};\ndemoWrapper(document, person);",
+        "after": "function demoWrapper(outStream, person){\n  emitPhotoData(outStream, person.photo);\n  outStream.write(`<p>title: ${person.photo.title}</p>`);\n  function emitPhotoData(outStream, photo){\n    outStream.write(`<p>title: ${photo.location}</p>`);\n  }\n}\n\nconst person = {photo: {title: 'title', location: 'New York'}};\ndemoWrapper(document, person);"
+      }
+    },
+    {
+      "id": "8.5",
+      "name": "以函数调用取代内联代码",
+      "chapter": "8 搬移特性",
+      "intent": "消除重复",
+      "when": "如果一些内联代码做的事情是已有函数可以做到的",
+      "steps": [],
+      "example": {
+        "before": "function demoWrapper(states){\n  let hasMa = false;\n  for(const i of states){\n    if(i === 'MA'){\n      hasMa = true;\n    }\n  }\n  return hasMa;\n}\ndemoWrapper(['MA','AL']);",
+        "after": "function demoWrapper(states){\n  return states.includes('MA');\n}\ndemoWrapper(['MA','AL']);"
+      }
+    },
+    {
+      "id": "8.6",
+      "name": "移动语句",
+      "chapter": "8 搬移特性",
+      "intent": "高内聚内部代码",
+      "when": "如果有几行代码取用了同一个数据结构，那么最好让它们在一起",
+      "steps": [],
+      "example": {
+        "before": "const retrievePricingPlan = () => ({unit: () => 0.25});\nconst retrieveOrder = () => ({name: 'abc'});\nconst pricePlan = retrievePricingPlan();\nconst order = retrieveOrder();\nlet charge;\nconst chargePerUnit = pricePlan.unit();",
+        "after": "const retrievePricingPlan = () => ({unit: () => 0.25});\nconst pricePlan = retrievePricingPlan();\nconst chargePerUnit = pricePlan.unit();\nconst retrieveOrder = () => ({name: 'abc'});\nconst order = retrieveOrder();\nlet charge;"
+      }
+    },
+    {
+      "id": "8.7",
+      "name": "拆分循环",
+      "chapter": "8 搬移特性",
+      "intent": "保持循环内部只做一件事",
+      "when": "如果循环内部身兼多职",
+      "steps": [],
+      "example": {
+        "before": "const people = [{age: 20, salary: 20000}, {age: 22, salary: 30000}];\nlet totalAge = 0;\nlet totalSalary = 0;\nfor(const p of people){\n  totalAge += p.age;\n  totalSalary += p.salary;\n}\nconst averageAge = totalAge / people.length;",
+        "after": "const people = [{age: 20, salary: 20000}, {age: 22, salary: 30000}];\nlet totalAge = 0;\nfor(const p of people){\n  totalAge += p.age;\n}\nlet totalSalary = 0;\nfor(const p of people){\n  totalSalary += p.salary;\n}\nconst averageAge = totalAge / people.length;"
+      }
+    },
+    {
+      "id": "8.8",
+      "name": "以管道取代循环",
+      "chapter": "8 搬移特性",
+      "intent": "提高代码可读性",
+      "when": "如果代码的逻辑可以通过内置方法处理",
+      "steps": [],
+      "example": {
+        "before": "const names = [];\nconst values = [{job: 'programmer', name: 'John'}, {job: 'financer', name: 'Kaly'}];\nfor(const i of values){\n  if(i.job === 'programmer'){\n    names.push(i.name);\n  }\n}\nconsole.info(names);",
+        "after": "const values = [{job: 'programmer', name: 'John'}, {job: 'financer', name: 'Kaly'}];\nconst names = values\n  .filter(i => i.job === 'programmer')\n  .map(i => i.name);\nconsole.info(names);"
+      }
+    },
+    {
+      "id": "8.9",
+      "name": "移除死代码",
+      "chapter": "8 搬移特性",
+      "intent": "移除无用代码",
+      "when": "",
+      "steps": []
+    },
+    {
+      "id": "9.1",
+      "name": "拆分代码",
+      "chapter": "9 重新组织数据",
+      "intent": "每个变量只承担一个责任，同一个变量承担两件不同的事情，会令代码阅读者糊涂",
+      "when": "大多数情况下变量只赋值一次，除了：循环变量（例如：`for(let i =0; i < 5; i++)` 中的`i`），收集结果变量",
+      "steps": [],
+      "example": {
+        "before": "let height = 10; \nlet width = 20;\nlet temp = 2 * (height + width);\ntemp = height * width;",
+        "after": "const height = 10; \nconst width = 20;\nconst perimeter = 2 * (height * width);\nconst area = height * width;"
+      }
+    },
+    {
+      "id": "9.2",
+      "name": "字段改名",
+      "chapter": "9 重新组织数据",
+      "intent": "好的名字可以帮助阅读者更易理解",
+      "when": "",
+      "steps": [],
+      "example": {
+        "before": "class Organization{\n  get name(){}\n}",
+        "after": "class Organization{\n  get title(){}\n}"
+      }
+    },
+    {
+      "id": "9.3",
+      "name": "以查询取代派生变量",
+      "chapter": "9 重新组织数据",
+      "intent": "减少方法中的*副作用*，单一原则",
+      "when": "对数据的修改常常导致代码的各个部分以丑陋的形式互相耦合：在一处修改数据，却在另一处造成难以发现的破坏",
+      "steps": [],
+      "example": {
+        "before": "class ProductPlan{\n  constructor(num){\n    this._product = num;\n  }\n  get product(){\n    return this._product;\n  }\n  applyAdjustment(num){\n    this._accumulator.push(num);\n    this._product += num;\n  }\n  showProductList(){\n    console.info(this._accumulator);\n  }\n}",
+        "after": "class Product{\n  constructor(num){\n    this._initialProduct = num;\n    this._accumulator = [];\n  }\n  get productTotal(){\n    return this._initialProduct + this.productCalculator;\n  }\n  get productCalculator(){\n    return this._accumulator.reduce((sum, cur) => sum + cur, 0);\n  }\n  applyAdjustment(num){\n    this._accumulator.push(num);\n  }\n  showProductList(){\n    console.info(this._accumulator);\n  }\n}"
+      }
+    },
+    {
+      "id": "9.4",
+      "name": "将引用对象改为值对象",
+      "chapter": "9 重新组织数据",
+      "intent": "值对象的不可变性处理起来更容易，可以任意的传递，防止被外部修改",
+      "when": "如果不需要改变值的引用关系，每个值是不可变的",
+      "steps": [],
+      "example": {
+        "before": "class Person{\n  constructor(){\n    this._telephoneNum = new TelephoneNumber(); \n  }\n  get officeAreaCode(){\n    return this._telephoneNum.areaCode;\n  }\n  set officeAreaCode(code){\n    this._telephoneNum.areaCode = code;\n  }\n  get officeNumber(){\n    return this._telephoneNum.number;\n  }\n  set officeNumber(number){\n    this._telephoneNum.number = number;\n  }\n}\nclass TelephoneNumber{\n  get areaCode(){\n// ...",
+        "after": "class Person{\n  get officeAreaCode(){\n    return this._telephoneNum.areaCode;\n  }\n  set officeAreaCode(code){\n    this._telephoneNum = new TelephoneNumber(code, this.officeNumber);\n  }\n  get officeNumber(){\n    return this._telephoneNum.number;\n  }\n  set officeNumber(number){\n    this._telephoneNum = new TelephoneNumber(this.officeAreaCode, number);\n  }\n}\nclass TelephoneNumber{\n  constructor(areCode, number){\n    this._areaCode = areaCode;\n    this._number = number;\n  }\n// ..."
+      }
+    },
+    {
+      "id": "9.5",
+      "name": "将值对象改为引用对象",
+      "chapter": "9 重新组织数据",
+      "intent": "保持数据共享",
+      "when": "如果数据结构中包含多个记录，而这些记录都有关联到同一个逻辑的数据结构，例如一个数据的改动，需要共享到整个数据集",
+      "steps": [],
+      "example": {
+        "before": "class Customer{\n  constructor(id){\n    this._id = id;\n  }\n  get id(){\n    return this._id;\n  }\n}\nclass Order{\n  constructor(data){\n    this._number = data.number;\n    this._customer = new Customer(data.customer);\n  }\n  get customer(){\n    return this._customer;\n  }\n}\nconst order = new Order({\n  number: 100,\n// ...",
+        "after": "class Customer{\n  constructor(id){\n    this._id = id;\n  }\n  get id(){\n    return this._id;\n  }\n}\nclass Order{\n  constructor(data){\n    this._number = data.number;\n    this._customer = repo.registerCustomer(data.customer);\n  }\n  get customer(){\n    return this._customer;\n  }\n}\nconst repo = {\n  repoData: {\n// ..."
+      }
+    },
+    {
+      "id": "10.1",
+      "name": "分解条件表达式",
+      "chapter": "10 简化条件逻辑",
+      "intent": "简化条件，易于理解代码逻辑",
+      "when": "当检查处理逻辑复杂时",
+      "steps": [],
+      "example": {
+        "before": "function demoWrapper(date, plan, quantity){\n  let charge;\n  if(!date.isBefore(plan.summerStart) && !date.isAfter(plan.summerEnd)){\n    charge = quantity * plan.summerRate;\n  }else{\n    charge = quantity * plan.regularRate + plan.regularServiceCharge;\n  }\n  return charge;\n}",
+        "after": "function demoWrapper(date, plan, quantity){\n  function isSummer(){\n    return !date.isBefore(plan.summerStart) && !date.isAfter(plan.summerEnd);\n  }\n  function summerCharge(){\n    return quantity * plan.summerRate;\n  }\n  function regularCharge(){\n    return quantity * plan.regularRate + plan.regularServiceCharge;\n  }\n  return isSummer() ? summerCharge() : regularCharge();\n}"
+      }
+    },
+    {
+      "id": "10.2",
+      "name": "合并条件表达式",
+      "chapter": "10 简化条件逻辑",
+      "intent": "统一处理条件语句",
+      "when": "当检查条件各不相同，最终行为一致时",
+      "steps": [],
+      "example": {
+        "before": "function demoWrapper(age, experience, isPassTest){\n  if(age < 18) return 'younger';\n  if(experience < 5) return 'younger';\n  if(!isPassTest) return 'younger';\n}",
+        "after": "function demoWrapper(age, experience, isPassTest){\n  if(isYounger(age, experience, isPassTest)) return 'younger';\n  function isYounger(age, experience, isPassTest){\n    return age<18 || experience < 5 || !isPassTest;\n  }\n}"
+      }
+    },
+    {
+      "id": "10.3",
+      "name": "卫语句取代嵌套条件表达式",
+      "chapter": "10 简化条件逻辑",
+      "intent": "减少逻辑的复杂度",
+      "when": "当出现需要单独检查某个特定条件时",
+      "steps": [],
+      "example": {
+        "before": "function getPayment(isRead, isSeparated, isRetired){\n  let result;\n  if(isRead){\n    result = deadAmount();\n  }else{\n    if(isSeparated){\n      result = separatedAmount();\n    }else{\n      if(isRetired){\n        result = retiredAmount();\n      }else{\n        result = normalAmount();\n      }\n    }\n  }\n}\nfunction deadAmount() {\n  return 'deadAmount';\n}\n// ...",
+        "after": "function getPayment(isRead, isSeparated, isRetired){\n  if(isRead) return deadAmount();\n  if(isSeparated) return separatedAmount();\n  if(isRetired) return retiredAmount();\n  return normalAmount();\n}\nfunction deadAmount() {\n  return 'deadAmount';\n}\nfunction separatedAmount() {\n  return 'separatedAmount';\n}\nfunction retiredAmount() {\n  return 'retiredAmount';\n}\nfunction normalAmount() {\n  return 'normalAmount';\n}"
+      }
+    },
+    {
+      "id": "10.4",
+      "name": "以多态取代条件表达式",
+      "chapter": "10 简化条件逻辑",
+      "intent": "增强扩展性，减少逻辑的复杂度",
+      "when": "当多个逻辑处理情况",
+      "steps": [],
+      "example": {
+        "before": "function getBird(){\n  return {\n    type: 'EuropeanSwallow'\n  }\n}\nconst bird = getBird();\nswitch(bird.type){\n  case 'EuropeanSwallow':\n    return 'EuropeanSwallow';\n  case 'AfricanSwallow':\n    return 'AfricanSwallow';\n  default:\n    return 'unknown';\n}",
+        "after": "class EuropeanSwallow{\n  get name(){\n    return 'EuropeanSwallow';\n  }\n}\nclass AfricanSwallow{\n  get name(){\n    return 'AfricanSwallow';\n  }\n}"
+      }
+    },
+    {
+      "id": "10.5",
+      "name": "引入特例",
+      "chapter": "10 简化条件逻辑",
+      "intent": "提供复用性以及统一性",
+      "when": "如果某部分逻辑都在检查某个特殊值，并且处理的逻辑也都相同",
+      "steps": [],
+      "example": {
+        "before": "let customer = getCustomer();\nif(customer === 'unknown'){\n  customerName = 'occupant';\n}\nfunction getCustomer(){ return 'normal'; }",
+        "after": "class UnknownCustomer{\n  get name(){\n    return 'occupant';\n  }\n}"
+      }
+    },
+    {
+      "id": "10.6",
+      "name": "引入断言",
+      "chapter": "10 简化条件逻辑",
+      "intent": "保障传入值是可预测的，预习发现测试的BUG",
+      "when": "",
+      "steps": [],
+      "example": {
+        "before": "const discountRate = getDiscountRate();\nlet base = 10;\nif(discountRate){\n  base = base - discountRate * base;\n}\nfunction getDiscountRate(){ return 0.25;}",
+        "after": "let base = 10;\nconst discountRate = getDiscountRate();\nasset(discountRate > 0);\nif(discountRate){\n  base = base - discountRate * base;\n}\nfunction getDiscountRate(){ return 0.25;}"
+      }
+    },
+    {
+      "id": "11.1",
+      "name": "查询函数和修改函数分离",
+      "chapter": "11 重构API",
+      "intent": "减少函数副作用 == 任何有返回值的函数，都要减少它的副作用",
+      "when": "当函数中又有查询，又有命令",
+      "steps": [],
+      "example": {
+        "before": "function getTotalOutStandingAndSendBill(customer){\n  const result = customer.invoice.reduce((total, cur)=> cur.amount + total, 0);\n  sendBill(result);\n  return result;\n}\nfunction sendBill(){}",
+        "after": "function getTotalStanding(customer){\n  return customer.invoice.reduce((total, cur)=> cur.amount + total, 0);\n}\nfunction sendBill(){}\nfunction handler(){\n  const totalOutstanding = getTotalStanding();\n  sendBill(totalOutstanding);\n}"
+      }
+    },
+    {
+      "id": "11.2",
+      "name": "函数参数化",
+      "chapter": "11 重构API",
+      "intent": "增强函数的功能",
+      "when": "如果发现多个函数逻辑相似，只有某1-2个字面量不同",
+      "steps": [],
+      "example": {
+        "before": "function tenPercentRaise(person){\n  person.salary = person.salary.multiply(1.1);\n}\nfunction fivePercentRaise(person){\n  person.salary = person.salary.multiply(0.05);\n}",
+        "after": "function raise(person, factor){\n  person.salary = person.salary.multiply(factor);\n}"
+      }
+    },
+    {
+      "id": "11.3",
+      "name": "移除标记参数",
+      "chapter": "11 重构API",
+      "intent": "代码更清晰，减少函数的复杂度。去除flag - 一般为true/false",
+      "when": "如果参数值影响函数内部的控制流",
+      "steps": [],
+      "example": {
+        "before": "function takeOrder(order){\n  const date = getOrderDate(order, true);\n}\nfunction takeAnotherOrder(order){\n  const date = getOrderDate(order, false);\n}\nfunction getOrderDate(order, isExpire){\n  return isExpire ? '02/01/2022' : '02/01/2023';\n}",
+        "after": "function takeOrder(order){\n  const date = getExpireOrder(order);\n}\nfunction takeAnotherOrder(order){\n  const date = getNormalOrder(order);\n}\nfunction getExpireOrder(order){\n  return order.date + 5;\n}\nfunction getNormalOrder(order){\n  return order.date;\n}"
+      }
+    },
+    {
+      "id": "11.4",
+      "name": "保持对象完整性",
+      "chapter": "11 重构API",
+      "intent": "缩短参数列表，参数配置灵活",
+      "when": "如果传入多个参数传值",
+      "steps": [],
+      "example": {
+        "before": "const temperature = { low: 10, high: 30 };\nconst { low, high } = temperature;\nif(isValidTemperature(low, high)){\n  console.info('valid');\n};\nfunction isValidTemperature(low, high){\n  return low > 0 && high < 100 && high > low;\n}",
+        "after": "const temperature = { low: 10, high: 30 };\nif(isValidTemperature(temperature)){\n  console.info('valid');\n};\nfunction isValidTemperature({ low, high }){\n  return low > 0 && high < 100 && high > low;\n}"
+      }
+    },
+    {
+      "id": "11.5",
+      "name": "以查询取代参数",
+      "chapter": "11 重构API",
+      "intent": "减少传参，从而减少调用者的成本",
+      "when": "如果传入多个参数，并且从一个参数推导出另一个参数",
+      "steps": [],
+      "example": {
+        "before": "const employee = {grade: 'A', name: 'John'};\navailableVacation(employee, employee.grade);\nfunction availableVacation(employee, grade){\n  console.info(grade);\n}",
+        "after": "const employee = {grade: 'A', name: 'John'};\navailableVacation(employee);\nfunction availableVacation(employee){\n  const { grade } = employee;\n  console.info(grade);\n}"
+      }
+    },
+    {
+      "id": "11.6",
+      "name": "以参数取代查询",
+      "chapter": "11 重构API",
+      "intent": "减少函数的副作用，以及引用关系，保持函数的纯净度",
+      "when": "如果函数引用了一个全局变量，或者引用想移除的元素",
+      "steps": [],
+      "example": {
+        "before": "const weather = {curTemperature: 20, unit: 'fahrenheit'};\nconst plan = {desc: 'go swimming'};\ntargetTemperature(plan);\ngetWeatherUnit();\nfunction targetTemperature(plan){\n  const { curTemperature } = weather;\n  console.info(plan.desc);\n}\n\nfunction getWeatherUnit(){\n  return weather.unit;\n}",
+        "after": "const weather = {curTemperature: 20, unit: 'fahrenheit'};\nconst plan = {desc: 'go swimming'};\ntargetTemperature(plan, weather);\ngetWeatherUnit(weather);\n\nfunction targetTemperature(plan, weather){\n  const { curTemperature } = weather;\n  console.info(plan.desc);\n}\n\nfunction getWeatherUnit(weather){\n  return weather.unit;\n}"
+      }
+    },
+    {
+      "id": "11.7",
+      "name": "移除设置函数",
+      "chapter": "11 重构API",
+      "intent": "防止某字段被修改",
+      "when": "当不希望某个字段被修改时",
+      "steps": [],
+      "example": {
+        "before": "class Person{\n  get id(){}\n  set id(name){}\n}",
+        "after": "class Person{\n  get id(){}\n}"
+      }
+    },
+    {
+      "id": "11.8",
+      "name": "以工厂函数取代构造函数",
+      "chapter": "11 重构API",
+      "intent": "增加灵活性",
+      "when": "不存在继承关系时",
+      "steps": [],
+      "example": {
+        "before": "const leadEngineer = new Employee('name','E');\nclass Employee{}",
+        "after": "const leadEngineer = createEngineer('name');\nfunction createEngineer(){}"
+      }
+    },
+    {
+      "id": "11.9",
+      "name": "以命令取代函数",
+      "chapter": "11 重构API",
+      "intent": "命令对象提供更大的灵活性，并且还可以支持撤销、生命周期的管理等附加操作",
+      "when": "当普通函数无法提供强有力灵活性",
+      "steps": [],
+      "example": {
+        "before": "function score(candidate, medicalExam){\n  const whiteList = ['Haven', 'Kaly'];\n  let result = 0;\n  if(medicalExam.isPass){\n    result += 10;\n  }else{\n    result -= 20;\n  }\n  if(whiteList.includes(candidate.name)){\n    result += 20;\n  }\n  return result;\n}",
+        "after": "class Scorer{\n  constructor(candidate, medicalExam){\n    this._candidate = candidate;\n    this._medicalExam = medicalExam;\n  }\n  execute(){\n    const whiteList = ['Haven', 'Kaly'];\n    let result = 0;\n    if(this._medicalExam.isPass){\n      result += 10;\n    }else{\n      result -= 20;\n    }\n    if(whiteList.includes(this._candidate.name)){\n      result += 20;\n    }\n    return result;\n  }\n}"
+      }
+    },
+    {
+      "id": "11.10",
+      "name": "以函数取代命令",
+      "chapter": "11 重构API",
+      "intent": "函数简单化",
+      "when": "大多数情况下，只想调用一个函数，完成自己的工作，不需要函数那么复杂",
+      "steps": [],
+      "example": {
+        "before": "class ChargeCalculator{\n  constructor(customer, usage){\n    this._customer = customer;\n    this._usage = usage;\n  }\n  execute(){\n    return this._customer.rate * this._usage;\n  }\n}",
+        "after": "function charge(customer, usage){\n  return customer.rate * usage;\n}"
+      }
+    },
+    {
+      "id": "12.1",
+      "name": "函数上移",
+      "chapter": "12 处理继承关系",
+      "intent": "提高复用性，减少重复",
+      "when": "当函数被大部分部分子类用到时",
+      "steps": [],
+      "example": {
+        "before": "class Employee{}\nclass Salesman extends Employee{\n  get name(){}\n}\nclass Engineer extends Employee{\n  get name(){}\n}",
+        "after": "class Employee{\n  get name(){}\n}\nclass Salesman extends Employee{}\nclass Engineer extends Employee{}"
+      }
+    },
+    {
+      "id": "12.2",
+      "name": "字段上移",
+      "chapter": "12 处理继承关系",
+      "intent": "",
+      "when": "",
+      "steps": []
+    },
+    {
+      "id": "12.3",
+      "name": "构造函数本体上移",
+      "chapter": "12 处理继承关系",
+      "intent": "提高复用性",
+      "when": "当多个子类有公共字段",
+      "steps": [],
+      "example": {
+        "before": "class Party{}\nclass Employee extends Party{\n  constructor(id){\n    this._id = id;\n  }\n}\nclass Salesman extends Employee{\n  constructor(id, name){\n    this._id = id;\n    this._name = name;\n  }\n}",
+        "after": "class Party{\n  constructor(id){\n    this._id = id;\n  }\n}\nclass Employee extends Party{\n  constructor(id){\n    super(id);\n  }\n}\nclass Salesman extends Employee{\n  constructor(id, name){\n    super(id);\n    this._name = name;\n  }\n}"
+      }
+    },
+    {
+      "id": "12.4",
+      "name": "函数下移",
+      "chapter": "12 处理继承关系",
+      "intent": "内聚子类的方法",
+      "when": "当函数被小部分子类用到时",
+      "steps": [],
+      "example": {
+        "before": "class Employee{\n  get quota(){}\n}\nclass Salesman extends Employee{}\nclass Engineer extends Employee{}",
+        "after": "class Employee{}\nclass Salesman extends Employee{\n  get quota(){}\n}\nclass Engineer extends Employee{}"
+      }
+    },
+    {
+      "id": "12.5",
+      "name": "字段下移",
+      "chapter": "12 处理继承关系",
+      "intent": "内聚子类的字段",
+      "when": "当字段被小部分子类用到时",
+      "steps": [],
+      "example": {
+        "before": "class Employee{\n  constructor(quote){\n    this._quote = quote;\n  }\n}\nclass Salesman extends Employee{\n  constructor(quote){\n    super(quote);\n  }\n}\nclass Engineer extends Employee{}",
+        "after": "class Employee{}\nclass Salesman extends Employee{\n  constructor(quote){\n    this._quote = quote;\n  }\n}\nclass Engineer extends Employee{}"
+      }
+    },
+    {
+      "id": "12.6",
+      "name": "以子类取代类型码",
+      "chapter": "12 处理继承关系",
+      "intent": "更明确地表达数据与类型之间的关系，增强子类的扩展性",
+      "when": "当不同的状态码表现不同的行为时",
+      "steps": [],
+      "example": {
+        "before": "function createEmployee(name, type){\n  return new Employee(name, type);\n}\nclass Engineer{}",
+        "after": "function createEmployee(name, type){\n  const employeeTypes = (name) =>{\n    return{\n      engineer: new Engineer(name),\n      salesman: new Salesman(name)\n    }\n  }\n  return employeeTypes(name)[type];\n}\nclass Engineer{}\nclass Salesman{}"
+      }
+    },
+    {
+      "id": "12.7",
+      "name": "移除子类",
+      "chapter": "12 处理继承关系",
+      "intent": "减少系统复杂度",
+      "when": "当子类的用处太少时，当子类简单",
+      "steps": [],
+      "example": {
+        "before": "class Person{\n  get genderCode(){\n    return 'X';\n  }\n}\nclass Male extends Person{\n  get genderCode(){\n    return 'M';\n  }\n}\nclass Female extends Person {\n  get genderCode(){\n    return 'F';\n  }\n}",
+        "after": "class Person{\n  constructor(genderCode){\n    this._genderCode = genderCode;\n  }\n  get genderCode(){\n    return this._genderCode;\n  }\n}"
+      }
+    },
+    {
+      "id": "12.8",
+      "name": "提取超类",
+      "chapter": "12 处理继承关系",
+      "intent": "把重复的行为收拢起来",
+      "when": "当多个子类的方法基本一致时",
+      "steps": [],
+      "example": {
+        "before": "class Department{\n  get totalAnnualCost(){}\n  get name(){}\n}\nclass Employee{\n  get annualCost(){}\n  get name(){}\n  get id(){}\n}",
+        "after": "class Party{\n  get totalAnnualCost(){}\n  get name(){}\n}\nclass Department extends Party{\n  get primaryCost(){}\n}\nclass Employee extends Party{\n  get id(){}\n}"
+      }
+    },
+    {
+      "id": "12.9",
+      "name": "折叠继承体系",
+      "chapter": "12 处理继承关系",
+      "intent": "合并子类，减少不必要的子类，降低系统复杂度",
+      "when": "当超类与子类没有多大差别",
+      "steps": [],
+      "example": {
+        "before": "class Employee{\n  getSalary(){} \n}\nclass Sales extends Employee{}",
+        "after": "class Employee{\n  getSalary(){}\n}"
+      }
+    },
+    {
+      "id": "12.10",
+      "name": "以委托取代子类",
+      "chapter": "12 处理继承关系",
+      "intent": "增强类的扩展性",
+      "when": "当子类可能存在多种类型上的变化",
+      "steps": [],
+      "example": {
+        "before": "class Booking{\n  constructor(show, date){\n    this._show = show;\n    this._date = date;\n  }\n}\n\nclass PremiumBooking extends Booking{\n  constructor(show, date, extras){\n    super(show, date);\n    this._extras = extras;\n  }\n}",
+        "after": "class Booking{\n  constructor(show, date){\n    this._show = show;\n    this._date = date;\n    this._premium = null;\n  }\n  bePremium(extras){\n    this._premium = new PremiumBookingDelegate(this, extras);\n  }\n}\n\nclass PremiumBookingDelegate{\n  constructor(root, extras){\n    this._root = root;\n    this._extras = extras;\n  }\n}"
+      }
+    },
+    {
+      "id": "12.11",
+      "name": "以委托取代超类",
+      "chapter": "12 处理继承关系",
+      "intent": "增强类的扩展性",
+      "when": "当超类的部分方法不适用于子类，不清晰的继承关系",
+      "steps": [],
+      "example": {
+        "before": "class List{}\nclass Stack extends List{}",
+        "after": "class List{}\nclass Stack{\n  constructor(){\n    this._list = new List();\n  }\n}"
+      }
+    }
+  ]
+}

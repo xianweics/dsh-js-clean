@@ -1,0 +1,17 @@
+# 上架 awesome-dsh-plugin 用的条目（模板）
+#
+# 用法：把下面除注释外的内容复制到 awesome-dsh-plugin 仓库的
+#   data/plugins/xianweics__dsh-js-clean.yml
+# 一个 PR 只加这一个文件，别动 README（README 由脚本生成）。
+# 仓库要先：① 公开、② 加 dsh-plugin topic、③ 建满 1 天。
+
+url: https://github.com/xianweics/dsh-js-clean
+name: xianweics/dsh-js-clean
+category: dev
+
+description:
+  en: "Scans JavaScript for code smells, grades cleanliness from A to E, and maps most findings to a refactoring technique from Fowler's catalog."
+  zh: "扫描 JavaScript 代码味道并给出整洁度评分，并把大多数问题对应到《重构》里的具体手法。"
+
+# 可选：发布 GitHub Release 后再打开下面一行，指向版本无关的 tarball 文件名
+# tarball: https://github.com/xianweics/dsh-js-clean/releases/latest/download/dsh-js-clean.tgz

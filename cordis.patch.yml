@@ -1,0 +1,12 @@
+# dsh-js-clean — bundle patch layer.
+#
+# 这一层让包能被当成 profile 的一个 bundle 安装：`dsh plugin add <路径>`
+# 会把包名写进 profile 的 dsh.profile.bundles，并应用 package.json 里
+# dsh.bundle.patch 指向的这份补丁，于是插件无需手写 profile 的
+# cordis.patch.yml 就能生效。
+#
+# id 故意写成稳定的固定值：如果你以前手工往 profile 补丁里插过同名 id，
+# 先删掉那条，否则同一个 id 会被插入两次。
+- insert:
+    - id: js-clean
+      name: dsh-js-clean
