@@ -1,6 +1,6 @@
 {
   "name": "dsh-js-clean",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "DeepSeek Harness plugin: score JavaScript cleanliness and name the refactoring (Extract Function, Guard Clauses, …) for every code smell found.",
   "type": "module",
   "main": "lib/index.mjs",

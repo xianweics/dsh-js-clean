@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.1
+
+- Docs only: README split into `README.md` (English) and `README.zh.md` (Chinese), with a language switch at the top; both files ship in the package.
+
 ## 0.2.0
 
 First public release.
