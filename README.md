@@ -1,8 +1,21 @@
 # dsh-js-clean
 
-A DeepSeek Harness plugin that scores how clean a JavaScript file is, and names **which refactoring to apply** for every problem it finds. The technique names and before/after examples come from [xianweics/refator-code](https://github.com/xianweics/refator-code), a Chinese reading of Martin Fowler's *Refactoring: Improving the Design of Existing Code*.
+English · [中文](./README.zh.md)
+
+![license: MIT](https://img.shields.io/badge/license-MIT-green) ![node: >=20](https://img.shields.io/badge/node-%3E%3D20-blue)
+
+## Description
+
+DeepSeek Harness plugin: score JavaScript cleanliness and name the refactoring (Extract Function, Guard Clauses, …) for every code smell found. The technique names and before/after examples come from [xianweics/refator-code](https://github.com/xianweics/refator-code), a Chinese reading of Martin Fowler's *Refactoring: Improving the Design of Existing Code*.
 
 Instead of a bare lint warning, most findings point at a catalog entry — `6.1 Extract Function`, `10.3 Replace Nested Conditional with Guard Clauses`, `8.8 Replace Loop with Pipeline` — so an agent reading the result knows both what is wrong and how the book says to fix it.
+
+## Features
+
+- **Cleanliness score:** one number per file, graded A–E
+- **Findings with advice:** line, column, message, and the refactoring technique each one maps to
+- **Safe fixes:** only rewrites that are provably behaviour-preserving, returned as a unified diff
+- **Catalog lookup:** 61 refactoring techniques and 24 code smells, queryable by id, chapter, or keyword
 
 ## Install
 
@@ -18,7 +31,7 @@ dsh plugin add /path/to/dsh-js-clean
 
 Start a new session afterwards; the `js_clean` tool is registered at plugin mount.
 
-## What it does
+## Usage
 
 One tool, `js_clean`, with four actions:
 
@@ -73,45 +86,6 @@ The analyzer is exported separately for reuse:
 import { analyzeSource } from 'dsh-js-clean/analyzer'
 
 const report = analyzeSource(source, { filename: 'order.js' })
-```
-
-## 中文说明
-
-给 DeepSeek Harness 用的 JavaScript 代码整洁度体检插件。规则出自 [xianweics/refator-code](https://github.com/xianweics/refator-code) 整理的《重构》中文名录。
-
-一条 finding 不只告诉你哪儿不舒服，还会指出**该用哪个重构手法**（6.1 提炼函数 / 10.3 以卫语句取代嵌套条件……），agent 拿到就能决定改哪里、怎么改。
-
-### 装
-
-```sh
-dsh plugin add dsh-js-clean
-```
-
-装完开新会话，`js_clean` 工具就绪。
-
-### 用
-
-```json
-{ "action": "scan", "path": "src/order.js" }
-{ "action": "fix", "path": "src/order.js", "write": true }
-{ "action": "explain", "technique": "提炼函数" }
-```
-
-- `scan`：整洁度 A–E、逐条问题（行号 + 改法 + 对应手法）
-- `fix`：只做能证明不改行为的修复，输出 diff；`write: true` 才落盘，先写 `.bak`
-- `explain`：查手法 / 坏味道，带目的、适用场景和 before-after
-- `catalog`：列名录，可按 `chapter` 或 `keyword` 过滤
-
-### fix 的边界
-
-自动改：`var`→`const/let`、`let`→`const`、删除无副作用的未使用声明；`aggressive: true` 时才把 `==` 改成 `===`。
-
-跳过并说明原因：脚本顶层 `var`、同名多声明 / 与参数同名 / 声明前就被引用、解构声明、初始化可能有副作用、同一处被两条规则同时命中。
-
-### 测试
-
-```sh
-node test/analyzer.test.mjs
 ```
 
 ## License
